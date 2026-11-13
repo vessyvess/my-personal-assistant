@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💜 Моят Гласов Организатор</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Персонализирани лилави градиенти и цветни акценти */
+        .purple-gradient {
+            background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #c084fc 100%);
+        }
+        .flower-bg {
+            background-color: #faf5ff;
+            background-image: radial-gradient(#f3e8ff 1.5px, transparent 1.5px), radial-gradient(#ede9fe 1.5px, #faf5ff 1.5px);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+        }
+    </style>
+</head>
+<body class="flower-bg text-slate-800 font-sans min-h-screen p-4 sm:p-6">
+ 
+    <div class="max-w-4xl mx-auto">
+        <!-- Header с цветна лилава визия и цветенца -->
+        <header class="purple-gradient text-white shadow-xl rounded-3xl p-6 mb-6 flex flex-col sm:flex-row justify-between items-center gap-4 relative overflow-hidden">
+            <!-- Декоративни елементи / цветенца във фон -->
+            <div class="absolute -right-6 -bottom-6 text-7xl opacity-20 pointer-events-none">🌸</div>
+            <div class="absolute right-20 top-2 text-3xl opacity-15 pointer-events-none">🌷</div>
+            
+            <div class="relative z-10">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-wide flex items-center gap-2">
+                    💜 Моите Списъци & Задачи 🌸
+                </h1>
+                <p class="text-purple-100 text-sm mt-1">Твоето лично пространство за гласово управление и ред</p>
+            </div>
+            
+            <!-- Гласов бутон (кечи, лилав и атрактивен) -->
+            <button id="voiceBtn" onclick="toggleVoiceInput()" class="relative z-10 bg-white text-purple-700 hover:bg-purple-50 px-6 py-3.5 rounded-2xl shadow-lg flex items-center gap-2 font-bold transition transform active:scale-95 border-2 border-purple-200">
+                🎤 <span id="voiceBtnText">Диктувай команда</span>
+            </button>
+        </header>
+ 
+        <!-- Команден панел за обратна връзка -->
+        <div class="bg-white/90 backdrop-blur border border-purple-200 rounded-2xl p-4 mb-6 text-sm text-purple-900 shadow-sm flex flex-col gap-1.5">
+            <span class="font-bold flex items-center gap-1.5 text-purple-700">💡 Съвет за гласова команда:</span>
+            <p class="italic text-slate-600">"Добави в Магазини Lidl кисело мляко, висок приоритет, срок до утре"</p>
+            <div id="transcript" class="mt-2 text-xs text-purple-800 font-mono bg-purple-50/80 p-2.5 rounded-xl border border-purple-100">
+                ✨ Статус: Готов за гласови команди или ръчно добавяне...
+            </div>
+        </div>
+ 
+        <!-- Контроли и Филтри с кечи цветове -->
+        <div class="flex flex-wrap gap-3 mb-6 items-center justify-between">
+            <div class="flex flex-wrap gap-2">
+                <button onclick="filterTasks('all')" class="px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-xl text-sm font-semibold hover:bg-purple-50 shadow-sm transition">🌸 Всички</button>
+                <button onclick="filterTasks('Магазини')" class="px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-xl text-sm font-semibold hover:bg-purple-50 shadow-sm transition">🛒 Магазини</button>
+                <button onclick="filterTasks('Задачи')" class="px-4 py-2 bg-white border border-purple-200 text-purple-700 rounded-xl text-sm font-semibold hover:bg-purple-50 shadow-sm transition">🎯 Задачи</button>
+                <button onclick="filterWeekTasks()" class="px-4 py-2 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-xl text-sm font-bold shadow-md hover:opacity-95 transition">⚡ Спешни до края на седмицата</button>
+            </div>
+        </div>
+ 
+        <!-- Главно съдържание: Списъци (Магазини и Задачи) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Магазини Колона -->
+            <div class="bg-white/90 backdrop-blur rounded-3xl shadow-md border border-purple-100 p-5">
+                <div class="flex justify-between items-center mb-4 border-b border-purple-50 pb-3">
+                    <h2 class="text-lg font-bold text-purple-900 flex items-center gap-2">🛒 Магазини и Покупки</h2>
+                    <span id="storesCount" class="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-bold">0</span>
+                </div>
+                <div id="storesList" class="space-y-3">
+                    <!-- Тук динамично се зареждат магазините -->
+                </div>
+            </div>
+ 
+            <!-- Задачи Колона -->
+            <div class="bg-white/90 backdrop-blur rounded-3xl shadow-md border border-purple-100 p-5">
+                <div class="flex justify-between items-center mb-4 border-b border-purple-50 pb-3">
+                    <h2 class="text-lg font-bold text-purple-900 flex items-center gap-2">🎯 Лични Задачи</h2>
+                    <span id="tasksCount" class="text-xs bg-purple-100 text-purple-700 px-2.5 py-1 rounded-full font-bold">0</span>
+                </div>
+                <div id="tasksList" class="space-y-3">
+                    <!-- Тук динамично се зареждат задачите -->
+                </div>
+            </div>
+ 
+        </div>
+    </div>
+ 
+    <!-- JavaScript Логика -->
+    <script>
+        // Начални примерни данни с лилава естетика
+        let items = [
+            { id: 1, group: 'Магазини', subcategory: 'Lidl', title: 'Мляко, яйца и кафе', priority: 'Висок', dueDate: '2026-11-15T10:00', completed: false },
+            { id: 2, group: 'Магазини', subcategory: 'DM', title: 'Любим парфюм и кремове', priority: 'Среден', dueDate: '2026-11-18T14:00', completed: false },
+            { id: 3, group: 'Задачи', subcategory: 'Работа', title: 'Подготовка на седмичен план', priority: 'Висок', dueDate: '2026-11-14T18:00', completed: false }
+        ];
+ 
+        let currentFilter = 'all';
+ 
+        function renderItems() {
+            const storesListEl = document.getElementById('storesList');
+            const tasksListEl = document.getElementById('tasksList');
+            
+            storesListEl.innerHTML = '';
+            tasksListEl.innerHTML = '';
+ 
+            let storesCount = 0;
+            let tasksCount = 0;
+ 
+            items.forEach(item => {
+                if (currentFilter === 'Магазини' && item.group !== 'Магазини') return;
+                if (currentFilter === 'Задачи' && item.group !== 'Задачи') return;
+                if (currentFilter === 'week') {
+                    const itemDate = new Date(item.dueDate);
+                    const now = new Date();
+                    const diffDays = (itemDate - now) / (1000 * 60 * 60 * 24);
+                    if (diffDays < 0 || diffDays > 7) return;
+                }
+ 
+                if (item.group === 'Магазини') storesCount++;
+                if (item.group === 'Задачи') tasksCount++;
+ 
+                // Цветни баджове за приоритет
+                let priorityColor = 'bg-slate-100 text-slate-700';
+                if (item.priority === 'Висок') priorityColor = 'bg-rose-100 text-rose-700 border border-rose-200';
+                if (item.priority === 'Среден') priorityColor = 'bg-amber-100 text-amber-700 border border-amber-200';
+                if (item.priority === 'Низък') priorityColor = 'bg-emerald-100 text-emerald-700 border border-emerald-200';
+ 
+                const cardHtml = `
+                    <div class="border border-purple-100 bg-purple-50/30 p-4 rounded-2xl flex items-start justify-between gap-3 transition hover:bg-purple-50/70 shadow-sm ${item.completed ? 'opacity-40 line-through' : ''}">
+                        <div class="flex items-start gap-3">
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleComplete(${item.id})" class="mt-1.5 w-5 h-5 text-purple-600 rounded-lg border-purple-300 focus:ring-purple-500 cursor-pointer">
+                            <div>
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="text-xs font-bold px-2.5 py-0.5 bg-purple-100 text-purple-800 rounded-full">🏷️ ${item.subcategory}</span>
+                                    <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${priorityColor}">${item.priority}</span>
+                                </div>
